@@ -23,13 +23,15 @@ async def on_message(message):
     if message.author == client.user:
         return
     if 'oof' in message.content.lower():
-        msg = 'OOF count : {}'.format(update_count())
+        msg = ':Oof: count : {}'.format(update_count())
         await client.send_message(message.channel, msg)
 
 
 # TODO add postgress support
 def update_count():
-    return 1
+    global count
+    count = count + 1
+    return count
 
 
 client.run(TOKEN)

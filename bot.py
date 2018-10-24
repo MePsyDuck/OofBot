@@ -28,14 +28,27 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
+    elif message.content.startswith('!oof_count'):
+        await client.send_message(message.channel, get_count())
+        return
     elif has_oof(message.content):
         msg = '<:Oof:504616782695366657> count : {}'.format(update_count())
         await client.send_message(message.channel, msg)
         return
     elif message.content == '!rst_count':
         reset_count()
-        message.reply('Count reset to 0')
+        await client.send_message(message.channel, 'Count reset to 0')
         return
+
+
+def get_count():
+    cur = conn.cursor()
+    get_query = 'SELECT oof_count FROM oofcounttable;'
+    cur.execute(get_query)
+    count = cur.fetchone()[0]
+    print('Get count : {}'.format(count))
+
+    cur.close()
 
 
 def reset_count():

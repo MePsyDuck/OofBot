@@ -4,7 +4,7 @@ import discord
 
 TOKEN = os.environ['token']
 client = discord.Client()
-count = 0
+count = 18
 
 
 async def on_ready():
@@ -23,7 +23,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     if 'oof' in message.content.lower():
-        msg = ':Oof: count : {}'.format(update_count())
+        msg = '<:Oof:504616782695366657> count : {}'.format(update_count())
         await client.send_message(message.channel, msg)
 
 

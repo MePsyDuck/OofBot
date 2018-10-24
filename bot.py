@@ -50,7 +50,7 @@ def reset_count():
 def has_oof(msg):
     tokens = re.split(r'[ `\-=~!@#$%^&*()_+\[\]{};\'\\:"|,./<>?]', msg.lower())
     for token in tokens:
-        if re.search(r'oo[f]+', token):
+        if re.search(r'[o]{2,}[f]+', token):
             return True
     return False
 

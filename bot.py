@@ -34,6 +34,7 @@ async def on_message(message):
         return
     elif message.content == '!rst_count':
         reset_count()
+        message.reply('Count reset to 0')
         return
 
 

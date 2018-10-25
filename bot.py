@@ -38,14 +38,14 @@ async def on_message(message):
         msg = '<:Oof:504616782695366657> It\'s '
         if len(user_ids) == 1:
             user = await client.get_user_info(user_ids[0])
-            msg += '{}'.format(user.display_name())
+            msg += '{}'.format(user.display_name)
         else:
             for user_id in user_ids[:-2]:
                 user = await client.get_user_info(user_id)
-                msg += '{}, '.format(user.display_name())
+                msg += '{}, '.format(user.display_name)
             second_last_user = await client.get_user_info(user_ids[-2])
             last_user = await client.get_user_info(user_ids[-1])
-            msg += '{} and {}'.format(second_last_user.display_name(), last_user.display_name())
+            msg += '{} and {}'.format(second_last_user.display_name, last_user.display_name)
         await client.send_message(message.channel, msg)
         return
 

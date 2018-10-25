@@ -87,6 +87,9 @@ def update_count(user_id):
     cur = conn.cursor()
     update_query = 'UPDATE oofcounttable SET oof_count = oof_count + 1 WHERE user_id = %s'
     cur.execute(update_query, (user_id,))
+    if cur.rowcount == 0:
+        insert_query = 'INSERT INTO oofcounttable (oof_count, user_id) VALUES (%d, %s)'
+        cur.execute(insert_query, (1, user_id,))
     cur.close()
 
 

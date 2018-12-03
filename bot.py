@@ -30,11 +30,11 @@ async def on_message(message):
         return
 
     elif message.content.lower().startswith('!oof_count'):
-        await client.send_message(message.channel, get_count())
+        await client.send_message(message.channel, get_count(server=message.server.id))
         return
 
     elif message.content.lower().startswith('!oof_king') or message.content.lower().startswith('!oof_queen'):
-        user_ids = get_max_oof_users()
+        user_ids = get_max_oof_users(server=message.server.id)
         msg = '<:Oof:504616782695366657> It\'s '
         if len(user_ids) == 1:
             user = await client.get_user_info(user_ids[0])
@@ -50,26 +50,26 @@ async def on_message(message):
         return
 
     elif has_oof(message.content):
-        update_count(message.author.id)
-        msg = '<:Oof:504616782695366657> count : {}'.format(get_count())
+        update_count(user=message.author.id, server=message.server.id)
+        msg = '<:Oof:504616782695366657> count : {}'.format(get_count(server=message.server.id))
         await client.send_message(message.channel, msg)
         return
 
 
-def get_max_oof_users():
+def get_max_oof_users(server):
     cur = conn.cursor()
     max_user_query = 'SELECT user_id from oofcounttable WHERE oof_count = ' \
-                     '(SELECT MAX(oof_count) from oofcounttable WHERE user_id <> \'resv\' )'
-    cur.execute(max_user_query)
+                     '(SELECT MAX(oof_count) from oofcounttable WHERE user_id <> \'resv\' AND server_id = %s)'
+    cur.execute(max_user_query, (server,))
     user_id_tuple = cur.fetchall()
     user_ids = [user_id for user_id_row in user_id_tuple for user_id in user_id_row]
     return user_ids
 
 
-def get_count():
+def get_count(server):
     cur = conn.cursor()
-    get_query = 'SELECT sum(oof_count) FROM oofcounttable;'
-    cur.execute(get_query)
+    get_query = 'SELECT sum(oof_count) FROM oofcounttable WHERE server_id = %s;'
+    cur.execute(get_query, (server,))
     count = cur.fetchone()[0]
     cur.close()
     return count
@@ -83,13 +83,13 @@ def has_oof(msg):
     return False
 
 
-def update_count(user_id):
+def update_count(user, server):
     cur = conn.cursor()
-    update_query = 'UPDATE oofcounttable SET oof_count = oof_count + 1 WHERE user_id = %s'
-    cur.execute(update_query, (user_id,))
+    update_query = 'UPDATE oofcounttable SET oof_count = oof_count + 1 WHERE user_id = %s AND server_id = %s'
+    cur.execute(update_query, (user, server))
     if cur.rowcount == 0:
-        insert_query = 'INSERT INTO oofcounttable (oof_count, user_id) VALUES (%s, %s)'
-        cur.execute(insert_query, (1, user_id,))
+        insert_query = 'INSERT INTO oofcounttable (oof_count, user_id, server_id) VALUES (%s, %s, %s)'
+        cur.execute(insert_query, (1, user, server))
     cur.close()
 
 
